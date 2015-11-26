@@ -41,6 +41,10 @@ Simply sends a string over Bluetooth once every 5 seconds. This is useful to
 test that the RFduino is correctly sending data to the receiver.
 
 ##### temperature-test
-Reads the temperature from the temperature sensors and transmits over serial.
+Reads the temperature from a temperature sensor and transmits over serial.
 
 **Pay attention to the connections in the comment at the top of the file.**
+
+##### fall-design-day-demo
+Reads the temperature from the temperature sensors and transmits it over
+Bluetooth once every second.
