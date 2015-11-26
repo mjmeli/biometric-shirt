@@ -27,8 +27,20 @@ to Additional Board Manager URLs, then click OK and restart the IDE
 You can test that the IDE is setup properly by compiling code. You can find sample
 sketches in `File > Examples > RFduinoBLE`.
 
+##### Temperature Sensor Setup
+
+You need to install the supporting OneWire library to the `libraries` folder in
+the Arduino IDE install directory (i.e. `C:\Program Files (x86)\Arduino\libraries`).
+
+OneWire Library: http://www.pjrc.com/teensy/td_libs_OneWire.html
+
 ### Sketches
 
 ##### bluetooth-test
 Simply sends a string over Bluetooth once every 5 seconds. This is useful to
 test that the RFduino is correctly sending data to the receiver.
+
+##### temperature-test
+Reads the temperature from the temperature sensors and transmits over serial.
+
+**Pay attention to the connections in the comment at the top of the file.**
