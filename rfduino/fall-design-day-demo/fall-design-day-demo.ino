@@ -46,6 +46,11 @@ void loop(void)
     fmtFloat(temp, 2, str, 65);  // 2 decimal places
     RFduinoBLE.send(str, strlen(str));
   }
+  // If error, send 0 degrees for the demo (no error handling, helps dev android app)
+  else {
+    char str[] = "0.00";
+    RFduinoBLE.send(str, strlen(str));
+  }
 
   // Delay for a second
   RFduino_ULPDelay( SECONDS(1) );
