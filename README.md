@@ -16,3 +16,9 @@ aspect of the system.
 
 `rfduino` - Contains sample code and the project code for the RFduino aspect
 of the system.
+
+## Android App
+
+The android app can be found in a different repo: https://github.ncsu.edu/mjmeli/biometric-shirt-android-app/
+
+A shortcut to it is in the Android folder of this repo.
