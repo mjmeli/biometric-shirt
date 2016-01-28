@@ -1,0 +1,2 @@
+AD5933 library: https://github.com/WuMRC/drive
+Arduino code: https://ez.analog.com/thread/42057?tstart=0
