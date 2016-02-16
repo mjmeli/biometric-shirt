@@ -31,10 +31,10 @@ void setup(void)
 
   // Perform initial configuration. Fail if any one of these fail.
   if (!(ad5933.reset() &&
-        ad5933.setInternalClock(true);
-        ad5933.setStartFrequency(30000);
-        ad5933.setIncrementFrequency(1000);
-        ad5933.setNumberIncrements(10);
+        ad5933.setInternalClock(true) &&
+        ad5933.setStartFrequency(30000) &&
+        ad5933.setIncrementFrequency(1000) &&
+        ad5933.setNumberIncrements(10) &&
         ad5933.setPGAGain(PGA_GAIN_X1)))
         {
             Serial.println("FAILED in initialization!");
