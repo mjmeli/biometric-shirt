@@ -270,7 +270,7 @@ bool AD5933::setNumberIncrements(unsigned int num) {
  * @param gain The gain factor to select. Use constants or 1/5.
  * @return Success or failure
  */
-bool AD5933::setPGAGain(byte) {
+bool AD5933::setPGAGain(byte gain) {
     // Get the current value of the control register
     byte val;
     if (!getByte(CTRL_REG1, &val))
@@ -280,11 +280,11 @@ bool AD5933::setPGAGain(byte) {
     val &= 0xFE;
 
     // Determine what gain factor was selected
-    if (val == PGA_GAIN_X1 || val == 1) {
+    if (gain == PGA_GAIN_X1 || gain == 1) {
         // Set PGA gain to x1 in CTRL_REG1
         val |= PGA_GAIN_X1;
         return sendByte(CTRL_REG1, val);
-    } else if (val == PGA_GAIN_X5 || val == 5) {
+    } else if (gain == PGA_GAIN_X5 || gain == 5) {
         // Set PGA gain to x5 in CTRL_REG1
         val |= PGA_GAIN_X5;
         return sendByte(CTRL_REG1, val);

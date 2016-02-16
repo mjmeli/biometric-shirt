@@ -29,23 +29,30 @@ void setup(void)
   Serial.begin(9600);
   Serial.println("AD5933 Test Started!");
 
-  // Set up
-  ad5933.reset();
-  ad5933.setInternalClock(true);
-  ad5933.setStartFrequency(30000);
-  ad5933.setIncrementFrequency(1000);
-  ad5933.setNumberIncrements(10);
-  ad5933.setPGAGain(PGA_GAIN_X1);
+  // Begin I2C
+  Wire.begin();
+
+  // Perform initial configuration. Fail if any one of these fail.
+  if (!(ad5933.reset() &&
+        ad5933.setInternalClock(true) &&
+        ad5933.setStartFrequency(30000) &&
+        ad5933.setIncrementFrequency(1000) &&
+        ad5933.setNumberIncrements(10) &&
+        ad5933.setPGAGain(PGA_GAIN_X1)))
+        {
+            Serial.println("FAILED in initialization!");
+            RFduino_ULPDelay(INFINITE);
+        }
 }
 
 void loop(void)
-{ 
+{
   // Test - get temperature
   double temp = ad5933.getTemperature();
   Serial.println(temp);
 
   // Perform frequency sweep
-  ad5933.setPowerMode(POWER_STANDBY); // standby 
+  ad5933.setPowerMode(POWER_STANDBY); // standby
   ad5933.setControlMode(CTRL_INIT_START_FREQ);
   RFduino_ULPDelay(50);
   ad5933.setControlMode(CTRL_START_FREQ_SWEEP);
@@ -69,7 +76,7 @@ void loop(void)
       RFduino_ULPDelay(50);
     }
   }
-  
+
   // Delay
   RFduino_ULPDelay( SECONDS(5) );
 }
