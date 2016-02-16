@@ -99,7 +99,7 @@ class AD5933 {
         bool reset();
 
         // Temperature measuring
-        bool setTemperature(bool);
+        bool setTemperature(byte);
         double getTemperature();
 
         // Clock

@@ -22,12 +22,12 @@ AD5933 ad5933;
 
 void setup(void)
 {
+  // Begin I2C
+  Wire.begin();
+  
   // Begin serial at 9600 baud for output
   Serial.begin(9600);
   Serial.println("AD5933 Test Started!");
-
-  // Begin I2C
-  Wire.begin();
 
   // Set up
   ad5933.reset();
@@ -71,5 +71,5 @@ void loop(void)
   }
   
   // Delay
-  RFduino_ULPDelay( SECONDS(10) );
+  RFduino_ULPDelay( SECONDS(5) );
 }
