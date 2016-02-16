@@ -104,7 +104,7 @@ class AD5933 {
 
         // Clock
         bool setClockSource(byte);
-        bool setExternalClock(bool);
+        bool setInternalClock(bool);
         //bool setSettlingCycles(int); // not implemented - not used yet
 
         // Frequency sweep configuration
@@ -118,24 +118,26 @@ class AD5933 {
         // Excitation range configuration
         //bool setRange(byte, int); // not implemented - not used yet
 
-        // Status register
-        byte readStatusReg();
+        // Read registers
+        byte readRegister(byte);
+        byte readStatusRegister();
+        int readControlRegister();
 
         // Impedance data
         bool getComplexData(int*, int*);
+
+        // Set control mode register (CTRL_REG1)
+        bool setControlMode(byte);
 
         // Power mode
         bool setPowerMode(byte);
     private:
         // Private data
-        double clockSpeed = 16776000;
+        unsigned int clockSpeed = 16776000;
 
         // Sending/Receiving byte method, for easy re-use
         int getByte(byte, byte*);
         bool sendByte(byte, byte);
-
-        // Set control mode register (CTRL_REG1)
-        bool setControlMode(byte);
 };
 
 #endif

@@ -133,7 +133,7 @@ double AD5933::getTemperature() {
     // Set temperature mode
     if (setTemperature(TEMP_MEASURE)) {
         // Wait for a valid temperature to be ready
-        while((readStatusReg() & STATUS_TEMP_VALID) != STATUS_TEMP_VALID) ;
+        while((readStatusRegister() & STATUS_TEMP_VALID) != STATUS_TEMP_VALID) ;
 
         // Read raw temperature from temperature registers
         byte rawTemp[2];
@@ -178,17 +178,17 @@ bool AD5933::setClockSource(byte source) {
 }
 
 /**
- * Set the color source to external or not.
+ * Set the color source to internal or not.
  *
- * @param external Whether or not to set the clock source as external.
+ * @param internal Whether or not to set the clock source as internal.
  * @return Success or failure
  */
-bool AD5933::setExternalClock(bool external) {
+bool AD5933::setInternalClock(bool internal) {
     // This function is mainly a wrapper for setClockSource()
-    if (external)
-        return setClockSource(CLOCK_EXTERNAL);
-    else
+    if (internal)
         return setClockSource(CLOCK_INTERNAL);
+    else
+        return setClockSource(CLOCK_EXTERNAL);
 }
 
 /**
@@ -294,18 +294,37 @@ bool AD5933::setPGAGain(byte) {
 }
 
 /**
- * Read the value of the status register.
+ * Read the value of a register.
  *
- * @return The value of the status register. Returns 0xFF if can't read it.
+ * @param reg The address of the register to read.
+ * @return The value of the register. Returns 0xFF if can't read it.
  */
-byte AD5933::readStatusReg() {
+byte AD5933::readRegister(byte reg) {
     // Read status register and return it's value. If fail, return 0xFF.
     byte val;
-    if (getByte(STATUS_REG, &val)) {
+    if (getByte(reg, &val)) {
         return val;
     } else {
         return STATUS_ERROR;
     }
+}
+
+/**
+ * Read the value of the status register.
+ *
+ * @return The value of the status register. Returns 0xFF if can't read it.
+ */
+byte AD5933::readStatusRegister() {
+    return readRegister(STATUS_REG);
+}
+
+/**
+ * Read the value of the control register.
+ *
+ * @return The value of the control register. Returns 0xFFFF if can't read it.
+ */
+int AD5933::readControlRegister() {
+    return ((readRegister(CTRL_REG1) << 8) | readRegister(CTRL_REG2)) & 0xFFFF;
 }
 
 /**
@@ -317,7 +336,7 @@ byte AD5933::readStatusReg() {
  */
 bool AD5933::getComplexData(int *real, int *imag) {
     // Wait for a measurement to be available
-    while ((readStatusReg() & STATUS_DATA_VALID) != STATUS_DATA_VALID);
+    while ((readStatusRegister() & STATUS_DATA_VALID) != STATUS_DATA_VALID);
 
     // Read the four data registers.
     // TODO: Do this faster with a block read
@@ -330,8 +349,8 @@ bool AD5933::getComplexData(int *real, int *imag) {
     {
         // Combine the two separate bytes into a single 16-bit value and store
         // them at the locations specified.
-        *real = ((realComp[0] << 8) | realComp[1]) & 0xFFFF;
-        *imag = ((imagComp[0] << 8) | imagComp[1]) & 0xFFFF;
+        *real = (int16_t)(((realComp[0] << 8) | realComp[1]) & 0xFFFF);
+        *imag = (int16_t)(((imagComp[0] << 8) | imagComp[1]) & 0xFFFF);
 
         return true;
     } else {
