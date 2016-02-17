@@ -379,3 +379,74 @@ bool AD5933::setPowerMode(byte level) {
             return false;
     }
 }
+
+/**
+ * Perform a complete frequency sweep.
+ *
+ * @param real An array of appropriate size to hold the real data.
+ * @param imag An array of appropriate size to hold the imaginary data.
+ * @param n Length of the array (or the number of discrete measurements)
+ * @return Success or failure
+ */
+bool AD5933::frequencySweep(int real[], int imag[], int n) {
+    // Begin by issuing a sequence of commands
+    // If the commands aren't taking hold, add a brief delay
+    if (!(setPowerMode(POWER_STANDBY) &&         // place in standby
+         setControlMode(CTRL_INIT_START_FREQ) && // init start freq
+         setControlMode(CTRL_START_FREQ_SWEEP))) // begin frequency sweep
+         {
+             return false;
+         }
+
+    // Perform the sweep. Make sure we don't exceed n.
+    int i = 0;
+    while ((readStatusRegister() & STATUS_SWEEP_DONE) != STATUS_SWEEP_DONE) {
+        // Make sure we aren't exceeding the bounds of our buffer
+        if (i >= n) {
+            return false;
+        }
+
+        // Get the data for this frequency point and store it in the array
+        if (!getComplexData(&real[i], &imag[i])) {
+            return false;
+        }
+
+        // Increment the frequency and our index.
+        i++;
+        setControlMode(CTRL_INCREMENT_FREQ);
+    }
+
+    return true;
+}
+
+/**
+ * Computes the gain factor and phase for each point in a frequency sweep.
+ *
+ * @param real An array of appropriate size to hold the gain factors
+ * @param imag An array of appropriate size to hold phase data.
+ * @param ref The known reference resistance.
+ * @param n Length of the array (or the number of discrete measurements)
+ * @return Success or failure
+ */
+bool AD5933::calibrate(double gain[], int phase[], int ref, int n) {
+    // We need arrays to hold the real and imaginary values temporarily
+    int *real = new int[n];
+    int *imag = new int[n];
+
+    // Perform the frequency sweep
+    if (!frequencySweep(real, imag, n)) {
+        delete [] real;
+        delete [] imag;
+        return false;
+    }
+
+    // For each point in the sweep, calculate the gain factor and phase
+    for (int i = 0; i < n; i++) {
+        gain[i] = (double)(1.0/ref)/sqrt(pow(real[i], 2) + pow(imag[i], 2));
+        // TODO: phase
+    }
+
+    delete [] real;
+    delete [] imag;
+    return true;
+}

@@ -22,11 +22,14 @@ ad5933-test
 #define START_FREQ  (80000)
 #define FREQ_INCR   (1000)
 #define NUM_INCR    (40)
-#define SWEEP_DELAY (1)
+#define REF_RESIST  (10000)
 
 #define TIME_PIN    (3)
 
 AD5933 ad5933;
+
+double gain[NUM_INCR+1];
+int phase[NUM_INCR+1];
 
 void setup(void)
 {
@@ -53,6 +56,12 @@ void setup(void)
             RFduino_ULPDelay(INFINITE);
         }
 
+  // Perform calibration sweep
+  if (ad5933.calibrate(gain, phase, REF_RESIST, NUM_INCR+1))
+    Serial.println("Calibrated!");
+  else
+    Serial.println("Calibration failed...");
+
   // Disable active timer
   digitalWrite(TIME_PIN, LOW);
 }
@@ -66,33 +75,31 @@ void loop(void)
   // Enable active timer
   digitalWrite(TIME_PIN, HIGH);
 
-  // Perform frequency sweep
-  int cfreq = START_FREQ/1000;
-  ad5933.setPowerMode(POWER_STANDBY); // standby
-  ad5933.setControlMode(CTRL_INIT_START_FREQ);
-  RFduino_ULPDelay(SWEEP_DELAY);
-  ad5933.setControlMode(CTRL_START_FREQ_SWEEP);
-  RFduino_ULPDelay(SWEEP_DELAY);
-  while (true) {
-    int real, imag;
-    if (ad5933.getComplexData(&real, &imag)) {
+  // Create arrays to hold the data
+  int real[NUM_INCR+1], imag[NUM_INCR+1];
+
+  // Perform the frequency sweep
+  // NOTE: Do this and send data in real-time to reduce active time
+  if (ad5933.frequencySweep(real, imag, NUM_INCR+1)) {
+    // Print the frequency data
+    int cfreq = START_FREQ/1000;
+    for (int i = 0; i < NUM_INCR+1; i++, cfreq += FREQ_INCR/1000) {
+      // Print raw frequency data
       Serial.print(cfreq);
-      Serial.print(":R=");
-      Serial.print(real);
+      Serial.print(": R=");
+      Serial.print(real[i]);
       Serial.print("/I=");
-      Serial.println(imag);
-      cfreq += FREQ_INCR/1000;
-    } else {
-      Serial.println("Failed to get data");
-      break;
+      Serial.print(imag[i]);
+
+      // Compute impedance
+      double magnitude = sqrt(pow(real[i], 2) + pow(imag[i], 2));
+      double impedance = 1/(magnitude*gain[i]);
+      Serial.print("  |Z|=");
+      Serial.println(impedance);
     }
-    if ((ad5933.readStatusRegister() & STATUS_FREQ_SWEEP_DONE) == STATUS_FREQ_SWEEP_DONE) {
-      Serial.println("Frequency sweep completed");
-      break;
-    } else {
-      ad5933.setControlMode(CTRL_INCREMENT_FREQ);
-      RFduino_ULPDelay(SWEEP_DELAY);
-    }
+    Serial.println("Frequency sweep complete!");
+  } else {
+    Serial.println("Frequency sweep failed...");
   }
 
   // Disable active timer

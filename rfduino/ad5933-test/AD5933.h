@@ -83,8 +83,10 @@
 // Status register options
 #define STATUS_TEMP_VALID       (0x01)
 #define STATUS_DATA_VALID       (0x02)
-#define STATUS_FREQ_SWEEP_DONE  (0x04)
+#define STATUS_SWEEP_DONE       (0x04)
 #define STATUS_ERROR            (0xFF)
+// Frequency sweep parameters
+#define SWEEP_DELAY             (1)
 
 /**
  * AD5933 Library class
@@ -131,6 +133,10 @@ class AD5933 {
 
         // Power mode
         bool setPowerMode(byte);
+
+        // Perform frequency sweeps
+        bool frequencySweep(int[], int[], int);
+        bool calibrate(double[], int[], int, int);
     private:
         // Private data
         unsigned int clockSpeed = 16776000;
