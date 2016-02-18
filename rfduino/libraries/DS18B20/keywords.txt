@@ -1,0 +1,37 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DS18B20	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+getTemperature	KEYWORD2
+setResolution	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+CMD_CONVERT_TEMP	LITERAL1
+CMD_WRITE_SPAD	LITERAL1
+CMD_READ_SPAD	LITERAL1
+CMD_COPY_SPAD	LITERAL1
+CMD_RECALL_E2	LITERAL1
+CMD_READ_PWR	LITERAL1
+DS18B20_CODE	LITERAL1
+RES_9BIT	LITERAL1
+RES_10BIT	LITERAL1
+RES_11BIT	LITERAL1
+RES_12BIT	LITERAL1
+ALARM_DISABLED	LITERAL1
