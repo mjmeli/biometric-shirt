@@ -98,52 +98,52 @@ class AD5933 {
         // None yet?
 
         // Reset the board
-        bool reset();
+        static bool reset(void);
 
         // Temperature measuring
-        bool setTemperature(byte);
-        double getTemperature();
+        static bool setTemperature(byte);
+        static double getTemperature(void);
 
         // Clock
-        bool setClockSource(byte);
-        bool setInternalClock(bool);
+        static bool setClockSource(byte);
+        static bool setInternalClock(bool);
         //bool setSettlingCycles(int); // not implemented - not used yet
 
         // Frequency sweep configuration
-        bool setStartFrequency(unsigned long);
-        bool setIncrementFrequency(unsigned long);
-        bool setNumberIncrements(unsigned int);
+        static bool setStartFrequency(unsigned long);
+        static bool setIncrementFrequency(unsigned long);
+        static bool setNumberIncrements(unsigned int);
 
         // Gain configuration
-        bool setPGAGain(byte);
+        static bool setPGAGain(byte);
 
         // Excitation range configuration
         //bool setRange(byte, int); // not implemented - not used yet
 
         // Read registers
-        byte readRegister(byte);
-        byte readStatusRegister();
-        int readControlRegister();
+        static byte readRegister(byte);
+        static byte readStatusRegister(void);
+        static int readControlRegister(void);
 
         // Impedance data
-        bool getComplexData(int*, int*);
+        static bool getComplexData(int*, int*);
 
         // Set control mode register (CTRL_REG1)
-        bool setControlMode(byte);
+        static bool setControlMode(byte);
 
         // Power mode
-        bool setPowerMode(byte);
+        static bool setPowerMode(byte);
 
         // Perform frequency sweeps
-        bool frequencySweep(int[], int[], int);
-        bool calibrate(double[], int[], int, int);
+        static bool frequencySweep(int[], int[], int);
+        static bool calibrate(double[], int[], int, int);
     private:
         // Private data
-        unsigned int clockSpeed = 16776000;
+        static const unsigned int clockSpeed = 16776000;
 
         // Sending/Receiving byte method, for easy re-use
-        int getByte(byte, byte*);
-        bool sendByte(byte, byte);
+        static int getByte(byte, byte*);
+        static bool sendByte(byte, byte);
 };
 
 #endif

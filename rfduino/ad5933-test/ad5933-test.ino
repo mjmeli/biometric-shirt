@@ -26,8 +26,6 @@ ad5933-test
 
 #define TIME_PIN    (3)
 
-AD5933 ad5933;
-
 double gain[NUM_INCR+1];
 int phase[NUM_INCR+1];
 
@@ -36,28 +34,28 @@ void setup(void)
   // Set up pin GPIO1 as a way to measure active time
   pinMode(TIME_PIN, OUTPUT);
   digitalWrite(TIME_PIN, HIGH);
-  
+
   // Begin I2C
   Wire.begin();
-  
+
   // Begin serial at 9600 baud for output
   Serial.begin(9600);
   Serial.println("AD5933 Test Started!");
 
   // Perform initial configuration. Fail if any one of these fail.
-  if (!(ad5933.reset() &&
-        ad5933.setInternalClock(true) &&
-        ad5933.setStartFrequency(START_FREQ) &&
-        ad5933.setIncrementFrequency(FREQ_INCR) &&
-        ad5933.setNumberIncrements(NUM_INCR) &&
-        ad5933.setPGAGain(PGA_GAIN_X1)))
+  if (!(AD5933::reset() &&
+        AD5933::setInternalClock(true) &&
+        AD5933::setStartFrequency(START_FREQ) &&
+        AD5933::setIncrementFrequency(FREQ_INCR) &&
+        AD5933::setNumberIncrements(NUM_INCR) &&
+        AD5933::setPGAGain(PGA_GAIN_X1)))
         {
             Serial.println("FAILED in initialization!");
             RFduino_ULPDelay(INFINITE);
         }
 
   // Perform calibration sweep
-  if (ad5933.calibrate(gain, phase, REF_RESIST, NUM_INCR+1))
+  if (AD5933::calibrate(gain, phase, REF_RESIST, NUM_INCR+1))
     Serial.println("Calibrated!");
   else
     Serial.println("Calibration failed...");
@@ -69,7 +67,7 @@ void setup(void)
 void loop(void)
 {
   // Test - get temperature
-  double temp = ad5933.getTemperature();
+  double temp = AD5933::getTemperature();
   Serial.println(temp);
 
   // Enable active timer
@@ -80,7 +78,7 @@ void loop(void)
 
   // Perform the frequency sweep
   // NOTE: Do this and send data in real-time to reduce active time
-  if (ad5933.frequencySweep(real, imag, NUM_INCR+1)) {
+  if (AD5933::frequencySweep(real, imag, NUM_INCR+1)) {
     // Print the frequency data
     int cfreq = START_FREQ/1000;
     for (int i = 0; i < NUM_INCR+1; i++, cfreq += FREQ_INCR/1000) {
