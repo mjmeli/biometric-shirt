@@ -40,9 +40,11 @@ Arduino directory.
 In the following examples, I symlink the directory from the git directory to
 the Arduino directory.
 
-On Windows:
+On Windows (elevated command prompt):
 
     mklink /D "d:\Libraries\Documents\Arduino\libraries\AD5933" "d:\Libraries\Documents\GitHub\biometric-shirt\rfduino\libraries\AD5933"
+
+    mklink /D "d:\Libraries\Documents\Arduino\libraries\DS18B20" "d:\Libraries\Documents\GitHub\biometric-shirt\rfduino\libraries\DS18B20"
 
 ### Sketches
 
