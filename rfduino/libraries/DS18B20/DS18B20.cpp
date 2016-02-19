@@ -14,7 +14,7 @@
  * Get a float representing the temperature from the DS18B20.
  *
  * @param ds OneWire instance configured for communication with the DS18B20.
- * @return The average temperature in Fahrenheit of all devices.
+ * @return The average temperature in Fahrenheit of all devices, or 0 if fail.
  */
 float DS18B20::getTemperature(OneWire ds) {
     byte data[12];  // data buffer
@@ -34,14 +34,14 @@ float DS18B20::getTemperature(OneWire ds) {
         // Verify the CRC of the address
         if ( OneWire::crc8( addr, 7) != addr[7]) {
             //Serial.println("CRC is not valid!");
-            return -1000;
+            return 0.0;
         }
 
         // Verify the device is recognized by looking at the device ID in the
         // first byte of the address (=0x28).
         if (addr[0] != DS18B20_CODE) {
             //Serial.println("Device not recognized!");
-            return -1000;
+            return 0.0;
         }
 
         // Begin a temperature conversion
@@ -73,9 +73,9 @@ float DS18B20::getTemperature(OneWire ds) {
         avgTemp += temp_fahrenheit;
     }
 
-    // If we didn't catch any devices, return -1000
+    // If we didn't catch any devices, return 0.0
     if (deviceCount == 0)
-        return -1000;
+        return 0.0;
 
     // Compute and return the average
     avgTemp /= deviceCount;
