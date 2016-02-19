@@ -10,7 +10,7 @@ fall-design-day-demo
       | WHITE   | GPIO 2  |
       | BLACK   | GND     |
       |-------------------|
-      !! 
+      !!
       IMPORTANT: Also connect a 4.7k resistor between RED and WHITE as a
       pull-up resistor
       !!
@@ -32,10 +32,13 @@ void setup(void)
   // Begin bluetooth
   RFduinoBLE.advertisementData = "demo";
   RFduinoBLE.begin();
+
+  Serial.begin(9600);
+  Serial.println("Fall design day demo begin!");
 }
 
 void loop(void)
-{ 
+{
   // Get temperature
   float temp = getTemp();
 
@@ -45,6 +48,7 @@ void loop(void)
     char str[65];
     fmtFloat(temp, 2, str, 65);  // 2 decimal places
     RFduinoBLE.send(str, strlen(str));
+    Serial.println(temp);
   }
   // If error, send 0 degrees for the demo (no error handling, helps dev android app)
   else {
@@ -79,7 +83,7 @@ float getTemp(void)
   if ( OneWire::crc8( addr, 7) != addr[7]) {
     Serial.println("CRC is not valid!");
     return -1000;
-  } 
+  }
 
   // Verify the device is recognized by looking at the device ID in the first byte address (=0x28).
   if (addr[0] != 0x28){
@@ -91,7 +95,7 @@ float getTemp(void)
    * The code below changes the resolution of the temperature sensor. While this speeds
    * up conversion, it also reduces accuracy. I'm commenting this out until a time
    * restriction appears that makes using highest resolution an issue.
-   * 
+   *
   // If this is the first time seeing an address, set the conversion resolution to 9 bits
   if (!set) {
     ds.reset();
@@ -130,4 +134,3 @@ float getTemp(void)
   float temp_fahrenheit = temp_celsius * 1.8 + 32.0;
   return temp_fahrenheit;
 }
-
