@@ -109,7 +109,7 @@ void loop(void)
         if (bluetoothConnected) {
             char str[65];
             fmtFloat(temp, 2, str, 65); // 2 decimal places
-            //RFduinoBLE.send(str, strlen(str));
+            RFduinoBLE.send(str, strlen(str));
         }
     }
 
