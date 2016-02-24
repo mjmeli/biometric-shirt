@@ -416,7 +416,8 @@ bool AD5933::frequencySweep(int real[], int imag[], int n) {
         setControlMode(CTRL_INCREMENT_FREQ);
     }
 
-    return true;
+    // Put into standby
+    return setPowerMode(POWER_STANDBY);
 }
 
 /**
