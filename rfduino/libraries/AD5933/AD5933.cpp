@@ -423,8 +423,8 @@ bool AD5933::frequencySweep(int real[], int imag[], int n) {
 /**
  * Computes the gain factor and phase for each point in a frequency sweep.
  *
- * @param real An array of appropriate size to hold the gain factors
- * @param imag An array of appropriate size to hold phase data.
+ * @param gain An array of appropriate size to hold the gain factors
+ * @param phase An array of appropriate size to hold phase data.
  * @param ref The known reference resistance.
  * @param n Length of the array (or the number of discrete measurements)
  * @return Success or failure
@@ -449,5 +449,33 @@ bool AD5933::calibrate(double gain[], int phase[], int ref, int n) {
 
     delete [] real;
     delete [] imag;
+    return true;
+}
+
+/**
+ * Computes the gain factor and phase for each point in a frequency sweep.
+ * Also provides the caller with the real and imaginary data.
+ *
+ * @param gain An array of appropriate size to hold the gain factors
+ * @param phase An array of appropriate size to hold the phase data
+ * @param real An array of appropriate size to hold the real data
+ * @param imag An array of appropriate size to hold the imaginary data.
+ * @param ref The known reference resistance.
+ * @param n Length of the array (or the number of discrete measurements)
+ * @return Success or failure
+ */
+bool AD5933::calibrate(double gain[], int phase[], int real[], int imag[],
+                       int ref, int n) {
+    // Perform the frequency sweep
+    if (!frequencySweep(real, imag, n)) {
+        return false;
+    }
+
+    // For each point in the sweep, calculate the gain factor and phase
+    for (int i = 0; i < n; i++) {
+        gain[i] = (double)(1.0/ref)/sqrt(pow(real[i], 2) + pow(imag[i], 2));
+        // TODO: phase
+    }
+
     return true;
 }

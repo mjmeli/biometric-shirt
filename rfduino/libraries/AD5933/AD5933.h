@@ -137,6 +137,8 @@ class AD5933 {
         // Perform frequency sweeps
         static bool frequencySweep(int[], int[], int);
         static bool calibrate(double[], int[], int, int);
+        static bool calibrate(double gain[], int phase[], int real[],
+                              int imag[], int ref, int n);
     private:
         // Private data
         static const unsigned int clockSpeed = 16776000;
