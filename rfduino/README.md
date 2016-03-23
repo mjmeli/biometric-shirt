@@ -46,10 +46,12 @@ On Windows (elevated command prompt):
 
     mklink /D "d:\Libraries\Documents\Arduino\libraries\DS18B20" "d:\Libraries\Documents\GitHub\biometric-shirt\rfduino\libraries\DS18B20"
 
+    mklink /D "d:\Libraries\Documents\Arduino\libraries\MCP4018" "d:\Libraries\Documents\GitHub\biometric-shirt\rfduino\libraries\MCP4018"
+
 On Mac:
 
     ln -s ~/Downloads/biometric-shirt/rfduino/libraries/AD5933/ ~/Documents/Arduino/libraries/
-    
+
 ### Sketches
 
 ##### bluetooth-test
