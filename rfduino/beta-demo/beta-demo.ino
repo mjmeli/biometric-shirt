@@ -1,5 +1,5 @@
 /*
-   alpha-demo
+   beta-demo
     Reads temperature values from DS18B20 thermometer via OneWire.
     Reads impedance values from the AD5933.
 
@@ -114,6 +114,9 @@ void loop(void)
         appCommands &= ~APP_CMD_REFERENCE;
     }
 
+    // Check if the bluetooth connected and so we need to start sending bluetooth
+    bool sendBluetooth = bluetoothConnected;
+
     // Every 1 second, read temperature
     if (timer % 1 == 0) {
         // Get average temperature...add 1 to get body temperature
@@ -130,7 +133,7 @@ void loop(void)
         Serial.println(str);
 
         // Convert float to a string and send it over Bluetooth, if connected
-        if (bluetoothConnected) {
+        if (sendBluetooth) {
             RFduinoBLE.send(str, strlen(str));
         }
     }
@@ -154,7 +157,7 @@ void loop(void)
         // Send START command to app
         sprintf(str, "I$START$%d", NUM_INCR+1); 
         Serial.println(str);
-        if (bluetoothConnected) {
+        if (sendBluetooth) {
           RFduinoBLE.send(str, strlen(str));
         }
 
@@ -168,7 +171,7 @@ void loop(void)
             // Print out the frequency data
             sprintf(str, "I$%d$%d$%d", cfreq, real, imag);
             Serial.print(str);
-            if (bluetoothConnected) {
+            if (sendBluetooth) {
                 RFduinoBLE.send(str, strlen(str));
             }
 
@@ -187,7 +190,7 @@ void loop(void)
         // Send HALT command
         sprintf(str, "I$HALT");
         Serial.println(str);
-        if (bluetoothConnected) {
+        if (sendBluetooth) {
           RFduinoBLE.send(str, strlen(str));
         }
 
