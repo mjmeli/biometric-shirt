@@ -39,6 +39,6 @@ void loop(void)
     } else {
         Serial.println("Sending failed");
     }
-      RFduino_ULPDelay( SECONDS(5) );
+      RFduino_ULPDelay( SECONDS(1) );
   }
 }

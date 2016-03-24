@@ -9,7 +9,8 @@
     |-------------------|-------------|
     | RED     | +3V     | Power       |
     | GREEN   | GPIO2   | Temp Sensor |
-    | BLUE    | GPIO3   | Time Measure|
+    |         | GPIO3   | Switch Rest |
+    |         | GPIO4   | Switch Elec |
     | WHITE   | GPIO5   | I2C SCL     |
     | YELLOW  | GPIO6   | I2C SDC     |
     | BLACK   | GND     | Ground      |
@@ -34,11 +35,12 @@
 #define NUM_INCR    (40)
 #define REF_RESIST  (10000)
 
-// Temperature sensor settings
+// Pin for temperature sensor
 #define TEMP_PIN    (2)
 
-// Time measurement pin settings
-#define TIME_PIN    (3)
+// Pins for digital switch
+#define CALIBRATE_PIN (3)
+#define ELECTRODE_PIN (4)
 
 // Create instance for OneWire
 OneWire ds(TEMP_PIN);
@@ -64,19 +66,21 @@ int appCommands = 0;
 void setup(void)
 {
     // Begin bluetooth
-    RFduinoBLE.advertisementData = "alpha";
+    RFduinoBLE.advertisementData = "beta";
     RFduinoBLE.begin();
 
-    // Set up pin GPIO1 as a way to measure active time
-    pinMode(TIME_PIN, OUTPUT);
-    digitalWrite(TIME_PIN, LOW);
+    // Set up pin GPIO3/4 for the digital switch
+    pinMode(CALIBRATE_PIN, OUTPUT);
+    pinMode(ELECTRODE_PIN, OUTPUT);
+    digitalWrite(CALIBRATE_PIN, LOW);
+    digitalWrite(ELECTRODE_PIN, HIGH);
 
     // Begin I2C
     Wire.begin();
 
     // Begin serial at 9600 baud for output
     Serial.begin(9600);
-    Serial.println("AD5933 Test Started!");
+    Serial.println("Beta Demo Started!");
 
     // Set temperature resolution (default is 12 bit)
     DS18B20::setResolution(ds, RES_12BIT);
@@ -102,8 +106,6 @@ void setup(void)
 
 void loop(void)
 {
-    digitalWrite(TIME_PIN, HIGH);
-
     // Check if the app wants us to do anything
     if (appCommands & APP_CMD_REFERENCE) {
         // App wants reference resistor values
@@ -198,9 +200,7 @@ void loop(void)
         if (!AD5933::setPowerMode(POWER_STANDBY))
             Serial.println("Could not set to standby...");
     }
-
-    digitalWrite(TIME_PIN, LOW);
-
+    
     // Increment timer
     timer++;
 
@@ -228,3 +228,4 @@ void RFduinoBLE_onReceive(char *data, int len){
   else
     Serial.println("Unrecognized command");
 }
+
