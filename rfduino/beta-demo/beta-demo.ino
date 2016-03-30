@@ -85,8 +85,8 @@ void setup(void)
     // Set temperature resolution (default is 12 bit)
     DS18B20::setResolution(ds, RES_12BIT);
 
-    // Perform initial configuration. Fail if any one of these fail.
-    if (!(AD5933::reset() &&
+    // Perform initial configuration. Keep trying if any one of these fail.
+    while (!(AD5933::reset() &&
           AD5933::setInternalClock(true) &&
           AD5933::setStartFrequency(START_FREQ) &&
           AD5933::setIncrementFrequency(FREQ_INCR) &&
@@ -94,7 +94,7 @@ void setup(void)
           AD5933::setPGAGain(PGA_GAIN_X1)))
     {
         Serial.println("FAILED in initialization!");
-        RFduino_ULPDelay(INFINITE);
+        RFduino_ULPDelay(1);
     }
 
     // Perform calibration sweep
