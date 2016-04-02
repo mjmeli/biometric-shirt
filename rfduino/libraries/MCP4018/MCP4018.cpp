@@ -25,9 +25,5 @@ bool MCP4018::setValue(byte val) {
     Wire.write(val);
 
     // Check that transmission completed successfully
-    if (byte res = Wire.endTransmission() != I2C_RESULT_SUCCESS) {
-        return false;
-    } else {
-        return true;
-    }
+    return Wire.endTransmission() == I2C_RESULT_SUCCESS;
 }
