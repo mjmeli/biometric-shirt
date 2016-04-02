@@ -1,6 +1,7 @@
 /*
 mcp4018-test
-    Sends various values to the digital potentialmeter MCP4018 to test it.
+    Sends various values to the digital potentialmeter MCP4018 to test it. Can send the value
+    over serial connection as an ASCII string representing the value.
 
     Connections:
       |-------------------|-------------|
@@ -31,14 +32,43 @@ void setup(void)
 
 void loop(void)
 {
-  // Repeatedly send values of 0 to 127
-  for (byte potVal = 0; potVal <= 127; potVal++) {
-      if (MCP4018::setValue(potVal)) {
-        Serial.print("Sent ");
-        Serial.println(potVal);
-    } else {
-        Serial.println("Sending failed");
+    // Repeatedly send values of 0 to 127
+    for (byte potVal = 0; potVal <= 127; potVal++) {
+        if (MCP4018::setValue(potVal)) {
+          Serial.print("Sent ");
+          Serial.println(potVal);
+      } else {
+          Serial.println("Sending failed");
+      }
+        RFduino_ULPDelay( SECONDS(1) );
     }
-      RFduino_ULPDelay( SECONDS(1) );
-  }
+    
+    // Read a value from serial and handle it
+    /*
+    String str;
+
+    // Read each ASCII character sent
+    while (Serial.available() > 0) {
+        char c = Serial.read();
+        str += c;
+        RFduino_ULPDelay(2);
+    }
+
+    // Convert ASCII to integer
+    int val = -1;
+    if (str.length() > 0) {
+        val = str.toInt();
+
+        // Send value if it is valid
+        if (val >= 0 && val <= 127) {
+            if (MCP4018::setValue(val)) {
+                Serial.print("Sent ");
+                Serial.println(val);
+            } else {
+                Serial.println("Sending failed");
+            }
+        } else {
+            Serial.println("Invalid!");
+        }
+    } */
 }
