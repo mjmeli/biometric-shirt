@@ -9,7 +9,7 @@ void setup(void)
 {
   // Begin serial at 9600 baud for output
   Serial.begin(9600);
-  Serial.println("MCP4018 Test Started!");
+  Serial.println("Voltage Test Started!");
 
   // Setup voltage referencing by using the VBG as analog reference
   analogReference(VBG);         // sets the reference to 1.2 V band gap (internal)
