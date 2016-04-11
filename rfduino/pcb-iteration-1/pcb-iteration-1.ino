@@ -42,9 +42,7 @@ float calibrationResistorValue = CALIB_RESIST;
 // Track whether bluetooth is connected
 bool bluetoothConnected = false;
 bool sendBluetooth = false;     // to prevent connections mid-sweep to send data
-
-// Variable to denote when the app requests various commands
-int appCommands = 0;
+bool sentCalibrationValues = false; // for tracking sending calibration values
 
 void setup(void)
 {
@@ -111,18 +109,16 @@ void setup(void)
 
 void loop(void)
 {
-    // Check if the bluetooth connected and we need to start sending bluetooth
-    // We check at the beginning of each loop to avoid sending mid-sweep
-    sendBluetooth = bluetoothConnected;
-
-    // TODO: Check if the app wants us to do anything
-    if (bluetoothConnected && (appCommands & APP_CMD_REFERENCE)) {
-        // App wants reference resistor values
-        Serial.println("App requests reference resistor values");
-
-        // Wipe out flag
-        appCommands &= ~APP_CMD_REFERENCE;
+    // When a device first connects to the RFduino, the first impedance dataset
+    // that should be sent is the calibration resistor values.
+    if (bluetoothConnected && !sentCalibrationValues) {
+        sendCalibrationValues();
+        sentCalibrationValues = true;
     }
+
+    // Check if the bluetooth connected and we need to start sending bluetooth
+    // We check at the beginning of each loop to avoid sending data mid-sweep.
+    sendBluetooth = bluetoothConnected;
 
     // Every 1 second, measure temperature
     if (timer % 1 == 0) {
@@ -266,9 +262,39 @@ bool switchImpedanceMeasurement(int option) {
     }
 }
 
+// Send calibration values, generally for after a device first connects.
+// Does NOT print to Serial, only send to Bluetooth, if connected.
+void sendCalibrationValues() {
+    // Make sure Bluetooth is connected
+    if (!bluetoothConnected) return;
+
+    // Character array to hold data to print
+    char str[65];
+
+    // Send START command
+    sprintf(str, "I$START$%d", NUM_INCR+1);
+    RFduinoBLE.send(str, strlen(str));
+
+    // Iterate over the stored arrays of calibration resistor data.
+    int cfreq = START_FREQ/1000;
+    for (int i = 0; i < NUM_INCR+1; i++) {
+        // Pull data from calibration resistor arrays and send
+        sprintf(str, "I$%d$%d$%d", cfreq, realCalib[i], imagCalib[i]);
+        RFduinoBLE.send(str, strlen(str));
+
+        // Increment current frequency
+        cfreq += FREQ_INCR/1000;
+    }
+
+    // Send HALT command
+    sprintf(str, "I$HALT");
+    RFduinoBLE.send(str, strlen(str));
+}
+
 // Callback for when we connect to a device
 void RFduinoBLE_onConnect(){
     bluetoothConnected = true;
+    sentCalibrationValues = false;
     Serial.println("Bluetooth connection established!");
 }
 
@@ -279,10 +305,6 @@ void RFduinoBLE_onDisconnect(){
 }
 
 // Callback for when we receive data
-void RFduinoBLE_onReceive(char *data, int len){
-    char code = data[0];
-    if (data[0] == 'R')
-        appCommands |= APP_CMD_REFERENCE;
-    else
-        Serial.println("Unrecognized command");
+void RFduinoBLE_onReceive(char *data, int len) {
+    Serial.println("Bluetooth data received");
 }

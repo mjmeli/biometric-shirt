@@ -11,6 +11,7 @@ void measureTemperature(void);
 void measureImpedance(void);
 void measureBatteryVoltage(void);
 bool switchImpedanceMeasurement(int);
+void sendCalibrationValues(void);
 
 // Frequency sweep settings
 #define START_FREQ      (80000)
