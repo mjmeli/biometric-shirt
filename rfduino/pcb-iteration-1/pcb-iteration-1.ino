@@ -112,9 +112,16 @@ void loop(void)
     // When a device first connects to the RFduino, the first impedance dataset
     // that should be sent is the calibration resistor values.
     if (bluetoothConnected && !sentCalibrationValues) {
+        // Delay briefly. After initial connection, it may take a moment for
+        // the actual data connection to establish.
+        RFduino_ULPDelay(SECONDS(1));
+
+        // Send the calibration values
         sendCalibrationValues();
         sentCalibrationValues = true;
+        Serial.println("Sent calibration resistor values");
     }
+
 
     // Check if the bluetooth connected and we need to start sending bluetooth
     // We check at the beginning of each loop to avoid sending data mid-sweep.
@@ -284,6 +291,10 @@ void sendCalibrationValues() {
 
         // Increment current frequency
         cfreq += FREQ_INCR/1000;
+
+        // Arduino has a limit on the data transmission rate. To avoid dropping
+        // data, throttle the transmission slightly with a delay.
+        RFduino_ULPDelay(10);
     }
 
     // Send HALT command
