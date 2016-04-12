@@ -44,6 +44,9 @@ bool bluetoothConnected = false;
 bool sendBluetooth = false;     // to prevent connections mid-sweep to send data
 bool sentCalibrationValues = false; // for tracking sending calibration values
 
+// Variable to denote when the app requests various commands
+volatile int appCommands = 0;
+
 void setup(void)
 {
     // Begin bluetooth
@@ -72,6 +75,8 @@ void setup(void)
     } else {
         Serial.println("FAILED in setting the potentiometers!");
     }
+
+    Serial.println(calibrationResistorValue);
 
     // Set temperature resolution (default is 12 bit)
     if (DS18B20::setResolution(ds, RES_12BIT)) {
@@ -116,10 +121,17 @@ void loop(void)
         // the actual data connection to establish.
         RFduino_ULPDelay(SECONDS(1));
 
+        // Wait for the app to request the calibration resistor values
+        while (appCommands != APP_CMD_CALIBRATION) {}
+
         // Send the calibration values
         sendCalibrationValues();
         sentCalibrationValues = true;
+        appCommands = 0;
         Serial.println("Sent calibration resistor values");
+
+        // Reset the timer so we instantly do a sweep
+        timer = 0;
     }
 
 
@@ -294,7 +306,7 @@ void sendCalibrationValues() {
 
         // Arduino has a limit on the data transmission rate. To avoid dropping
         // data, throttle the transmission slightly with a delay.
-        RFduino_ULPDelay(10);
+        RFduino_ULPDelay(30);
     }
 
     // Send HALT command
@@ -306,16 +318,24 @@ void sendCalibrationValues() {
 void RFduinoBLE_onConnect(){
     bluetoothConnected = true;
     sentCalibrationValues = false;
+    sendBluetooth = false;
     Serial.println("Bluetooth connection established!");
 }
 
 // Callback for when we disconnect from a device
 void RFduinoBLE_onDisconnect(){
     bluetoothConnected = false;
+    sendBluetooth = false;
+    sentCalibrationValues = false;
     Serial.println("Bluetooth connection lost...");
 }
 
-// Callback for when we receive data
+// Callback for when we receive data.
 void RFduinoBLE_onReceive(char *data, int len) {
     Serial.println("Bluetooth data received");
+    if (strncmp(data, "calibration", len) == 0) {
+        appCommands = APP_CMD_CALIBRATION;
+    } else {
+      Serial.println("Invalid command!");
+    }
 }

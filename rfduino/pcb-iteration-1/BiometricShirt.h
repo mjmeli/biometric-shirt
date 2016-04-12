@@ -27,6 +27,6 @@ void sendCalibrationValues(void);
 #define ELECTRODE_PIN (4)
 
 // App commands
-#define APP_CMD_REFERENCE (0x01)
+#define APP_CMD_CALIBRATION (0x01)
 
 #endif
