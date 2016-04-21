@@ -335,7 +335,12 @@ void RFduinoBLE_onReceive(char *data, int len) {
     Serial.println("Bluetooth data received");
     if (strncmp(data, "calibration", len) == 0) {
         appCommands = APP_CMD_CALIBRATION;
+        sentCalibrationValues = false;
     } else {
       Serial.println("Invalid command!");
     }
+    for (int i = 0; i < len; i++) {
+      Serial.print(data[i]);
+    }
+    Serial.println();
 }
