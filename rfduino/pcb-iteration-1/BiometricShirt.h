@@ -28,5 +28,6 @@ void sendCalibrationValues(void);
 
 // App commands
 #define APP_CMD_CALIBRATION (0x01)
+#define APP_CMD_HYDRATION   (0x02)
 
 #endif

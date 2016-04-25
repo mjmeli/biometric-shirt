@@ -134,6 +134,15 @@ void loop(void)
         timer = 0;
     }
 
+    // Check if we have any commands to handle sent from the app
+    if (appCommands > 0) {
+        // If the app needs hydration information, just reset the timer.
+        if (appCommands == APP_CMD_HYDRATION)
+            timer = 0;
+
+        // Clear the command
+        appCommands = 0;
+    }
 
     // Check if the bluetooth connected and we need to start sending bluetooth
     // We check at the beginning of each loop to avoid sending data mid-sweep.
@@ -145,13 +154,13 @@ void loop(void)
     }
 
     // Every 5 seconds, measure impedance values and battery voltage
-    if (timer % 5 == 0) {
+    if (timer % 60 == 0) {
         measureImpedance();
         //measureBatteryVoltage();
     }
 
-    // Increment timer
-    timer++;
+    // Increment timer, reset every so often
+    if (++timer >= 600) timer = 0;
 
     // Delay
     RFduino_ULPDelay( SECONDS(1) );
@@ -306,7 +315,7 @@ void sendCalibrationValues() {
 
         // Arduino has a limit on the data transmission rate. To avoid dropping
         // data, throttle the transmission slightly with a delay.
-        RFduino_ULPDelay(30);
+        RFduino_ULPDelay(50);
     }
 
     // Send HALT command
@@ -332,15 +341,20 @@ void RFduinoBLE_onDisconnect(){
 
 // Callback for when we receive data.
 void RFduinoBLE_onReceive(char *data, int len) {
+    // Serial print the command received
     Serial.println("Bluetooth data received");
-    if (strncmp(data, "calibration", len) == 0) {
-        appCommands = APP_CMD_CALIBRATION;
-        sentCalibrationValues = false;
-    } else {
-      Serial.println("Invalid command!");
-    }
     for (int i = 0; i < len; i++) {
       Serial.print(data[i]);
     }
     Serial.println();
+
+    // Preliminarily the command
+    if (strncmp(data, "calibration", len) == 0) {
+        appCommands = APP_CMD_CALIBRATION;
+        sentCalibrationValues = false;
+    } else if (strncmp(data, "hydration", len) == 0) {
+        appCommands = APP_CMD_HYDRATION;
+    } else {
+      Serial.println("Invalid command!");
+    }
 }
