@@ -136,9 +136,9 @@ void loop(void)
 
     // Check if we have any commands to handle sent from the app
     if (appCommands > 0) {
-        // If the app needs hydration information, just reset the timer.
+        // If the app needs hydration information, do a sweep
         if (appCommands == APP_CMD_HYDRATION)
-            timer = 0;
+            measureImpedance();
 
         // Clear the command
         appCommands = 0;
@@ -156,7 +156,7 @@ void loop(void)
     // Every 5 seconds, measure impedance values and battery voltage
     if (timer % 60 == 0) {
         measureImpedance();
-        //measureBatteryVoltage();
+        measureBatteryVoltage();
     }
 
     // Increment timer, reset every so often
@@ -208,8 +208,18 @@ void measureBatteryVoltage() {
 
     RFduino_ULPDelay(100);    // needed to avoid artifacts
 
-    Serial.print("V=");
-    Serial.println(batteryVoltage);
+    // Convert the battery voltage to a percent based on the LDO minimum
+    if (batteryVoltage > 3.3) batteryVoltage = 3.3;
+    int batteryPercentage = (int)(((float)batteryVoltage - LDO_MIN_VOLTAGE)/
+                              ((float)BAT_MAX_VOLTAGE - LDO_MIN_VOLTAGE)*100.0);
+    
+    // Print to serial and perhaps send to app
+    char str[65];
+    sprintf(str, "B$%d", batteryPercentage);
+    Serial.println(str);
+    if (sendBluetooth) {
+        RFduinoBLE.send(str, strlen(str));
+    }
 }
 
 // Perform an impedance measurement and send the data

@@ -19,6 +19,10 @@ void sendCalibrationValues(void);
 #define NUM_INCR        (40)
 #define CALIB_RESIST    (1000)
 
+// Minimum operating voltage for the LDO
+#define LDO_MIN_VOLTAGE (2.1)
+#define BAT_MAX_VOLTAGE (3.3)
+
 // Pin for temperature sensor
 #define TEMP_PIN    (2)
 
