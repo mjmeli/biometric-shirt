@@ -50,7 +50,7 @@ volatile int appCommands = 0;
 void setup(void)
 {
     // Begin bluetooth
-    RFduinoBLE.advertisementData = "pcb-iteration-1";
+    RFduinoBLE.advertisementData = "pcb-iteration-2";
     RFduinoBLE.begin();
 
     // Begin I2C
@@ -58,7 +58,7 @@ void setup(void)
 
     // Begin serial at 9600 baud for output
     Serial.begin(9600);
-    Serial.println("PCB Iteration 1 Started!");
+    Serial.println("PCB Iteration 2 Started!");
 
     // Set up pin GPIO3 for the digital switch and start measuring the
     // calibration resistor
@@ -160,7 +160,7 @@ void loop(void)
     }
 
     // Every 5 seconds, measure impedance values and battery voltage
-    if (timer % 5 == 0) {
+    if (timer % 60 == 0) {
         measureImpedance();
         measureBatteryVoltage();
     }
