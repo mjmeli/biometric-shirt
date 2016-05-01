@@ -54,18 +54,35 @@ On Mac:
 
 ### Sketches
 
+##### ad5933-test
+Tests taking impedance measurements from the AD5933.
+
+##### alpha-demo
+Code presented during the Alpha Demo. Essentially reads temperature values from the DS18B20 and impedance values from the AD5933.
+
+##### battery-voltage
+Tests measuring the voltage supplied to the RFduino.
+
+##### beta-demo
+Code presented during the Beta Demo. Essentially reads temperature values from the DS18B20 and impedance values from the AD5933. Almost functionally the same as `alpha-demo`, but adds Bluetooth data transmission.
+
 ##### bluetooth-test
-Simply sends a string over Bluetooth once every 5 seconds. This is useful to
-test that the RFduino is correctly sending data to the receiver.
+Simply sends a string over Bluetooth once every 5 seconds. This is useful to test that the RFduino is correctly sending data to the receiver.
+
+##### fall-design-day-demo
+Reads the temperature from the temperature sensors and transmits it over Bluetooth once every second.
+
+##### libraries
+Not a sketch -- includes all of the important libraries.
+
+##### MCP4018-test
+Tests controlling the MCP4018 digital potentiometer.
+
+##### pcb-iteration-1
+Sketch for the first iteration of our PCB.
+
+##### pcb-iteration-2
+Sketch for the second iteration of our PCB. **FINAL CODE PRESENTED AT DESIGN DAY!**
 
 ##### temperature-test
 Reads the temperature from a temperature sensor and transmits over serial.
-
-**Pay attention to the connections in the comment at the top of the file.**
-
-##### fall-design-day-demo
-Reads the temperature from the temperature sensors and transmits it over
-Bluetooth once every second.
-
-##### ad5933-test
-Tests taking impedance measurements from the AD5933.

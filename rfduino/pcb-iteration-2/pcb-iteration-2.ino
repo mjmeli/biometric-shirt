@@ -1,6 +1,6 @@
 /**
   pcb-iteration-2
-    All functionality to make sure Iteration 1 of our PCB is functional.
+    All functionality to make sure Iteration 2 of our PCB is functional.
     - Reads temperature values from DS18B20 thermometer via OneWire.
     - Reads impedance values from the AD5933.
     - Sets digital potentiometers for calibration/reference
@@ -68,7 +68,7 @@ void setup(void)
     // Set up GPIO4 as LED pin
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, LOW);
-    
+
     // Set the potentiometers to as close to 1k as possible. Get the predicted
     // resistance as well.
     int valueCode = MCP4018::getValueForResistance(1000);
@@ -119,7 +119,7 @@ void loop(void)
 {
     // Toggle LED
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));
-  
+
     // When a device first connects to the RFduino, the first impedance dataset
     // that should be sent is the calibration resistor values.
     if (bluetoothConnected && !sentCalibrationValues) {
@@ -218,7 +218,7 @@ void measureBatteryVoltage() {
     if (batteryVoltage > 3.3) batteryVoltage = 3.3;
     int batteryPercentage = (int)(((float)batteryVoltage - LDO_MIN_VOLTAGE)/
                               ((float)BAT_MAX_VOLTAGE - LDO_MIN_VOLTAGE)*100.0);
-    
+
     // Print to serial and perhaps send to app
     char str[65];
     sprintf(str, "B$%d", batteryPercentage);
