@@ -21,4 +21,4 @@ of the system.
 
 The android app can be found in a different repo: https://github.ncsu.edu/mjmeli/biometric-shirt-android-app/
 
-A shortcut to it is in the Android folder of this repo.
+This is currently not accessible to people external to the NCSU organization.
